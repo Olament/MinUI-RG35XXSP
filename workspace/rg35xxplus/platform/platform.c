@@ -205,7 +205,9 @@ void PLAT_pollInput(void) {
 		}
 	}
 	
-	if (check_lid && PLAT_lidChanged(NULL)) pad.just_released |= BTN_SLEEP;
+	// only send sleep signal from closing the lid
+	int lid = 1;
+	if (check_lid && PLAT_lidChanged(&lid) && !lid) pad.just_released |= BTN_SLEEP;
 }
 
 int PLAT_shouldWake(void) {
