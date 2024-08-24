@@ -211,8 +211,7 @@ void PLAT_pollInput(void) {
 }
 
 int PLAT_shouldWake(void) {
-	int lid = 1; // assume open by default
-	if (check_lid && PLAT_lidChanged(&lid) && lid) return 1;
+	if (check_lid && PLAT_lidChanged(NULL)) {}
 	
 	int input;
 	static struct input_event event;

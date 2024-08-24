@@ -1611,6 +1611,7 @@ static void PWR_enterSleep(void) {
 		PLAT_enableBacklight(0);
 	}
 	system("killall -STOP keymon.elf");
+	system("echo -n mem > /sys/power/state");
 	
 	sync();
 }
@@ -1629,17 +1630,11 @@ static void PWR_exitSleep(void) {
 }
 
 static void PWR_waitForWake(void) {
-	uint32_t sleep_ticks = SDL_GetTicks();
 	while (!PAD_wake()) {
-		if (pwr.requested_wake) {
-			pwr.requested_wake = 0;
-			break;
-		}
+		// put device back to sleep
+		system("echo -n mem > /sys/power/state");
+		sync();
 		SDL_Delay(200);
-		if (pwr.can_poweroff && SDL_GetTicks()-sleep_ticks>=120000) { // increased to two minutes
-			if (pwr.is_charging) sleep_ticks += 60000; // check again in a minute
-			else PWR_powerOff();
-		}
 	}
 	
 	return;
